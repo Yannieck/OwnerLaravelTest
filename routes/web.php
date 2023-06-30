@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', 'HomeController@index');
-Route::get('/products', 'ProductController@index');
+Route::view('/', 'index');
+Route::view('/products', 'products.index');
 Route::post('/products/new', 'ProductController@new');
-Route::post('/products/delete', 'ProductController@delete');
+Route::delete('/products/delete', 'ProductController@delete');

@@ -23,6 +23,7 @@
             <li>
                 {!! $product->name !!}
                 <form action="/products/delete" method="POST">
+                    @method('DELETE')
                     @csrf
                     <input type="hidden" name="id" value="@php(print $product->id)"/>
                     <button type="submit">delete</button>
