@@ -15,5 +15,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'index');
 Route::view('/products', 'products.index');
-Route::post('/products/new', 'ProductController@new');
-Route::delete('/products/delete', 'ProductController@delete');
+
+Route::post('/product', 'ProductController@new');
+Route::delete('/product', 'ProductController@delete');

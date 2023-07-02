@@ -15,7 +15,7 @@ class CreateProductsTable extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 64)->comment('The product\'s name');
+            $table->string('name', 64)->comment('The product\'s name')->unique();
             $table->timestamps();
         });
     }

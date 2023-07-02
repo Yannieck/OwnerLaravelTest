@@ -10,7 +10,9 @@
             .alert-success {
                 color: green;
             }
-
+            .alert-error {
+                color: red;
+            }
         </style>
     </head>
     <body>
@@ -22,7 +24,7 @@
             @foreach (\App\Product::all() as $product)
             <li>
                 {!! $product->name !!}
-                <form action="/products/delete" method="POST">
+                <form action="/product" method="POST">
                     @method('DELETE')
                     @csrf
                     <input type="hidden" name="id" value="@php(print $product->id)"/>
@@ -41,12 +43,16 @@
         <div class="alert-success">
             {{ session('status') }}
         </div>
+        @elseif (session('error'))
+            <div class="alert-error">
+                {{ session('error') }}
+            </div>
         @endif
 
 
 
         <h2>New product</h2>
-        <form action="/products/new" method="POST">
+        <form action="/product" method="POST">
             @csrf
             <input type="text" name="name" placeholder="name" /><br />
             <textarea name="description" placeholder="description"></textarea><br />
