@@ -24,10 +24,9 @@
             @foreach (\App\Product::all() as $product)
             <li>
                 {!! $product->name !!}
-                <form action="/product" method="POST">
+                <form method="POST" action={{ route('product', ['productId' => $product->id]) }}>
                     @method('DELETE')
                     @csrf
-                    <input type="hidden" name="id" value="@php(print $product->id)"/>
                     <button type="submit">delete</button>
                 </form>
             </li>

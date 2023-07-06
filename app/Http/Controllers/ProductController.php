@@ -22,7 +22,7 @@ class ProductController extends Controller
         }
 
         try {
-            DB::insert("INSERT INTO products (name) VALUES ('" . $request->name . "')");
+            DB::insert("INSERT INTO products (name) VALUES (?)", [$request->name]);
         } catch (QueryException $qe) {
             $errorMsg = "";
             switch ($qe->getCode()){
@@ -44,7 +44,15 @@ class ProductController extends Controller
 
     public function delete(Request $request)
     {
-        DB::delete("DELETE FROM products WHERE id = " . $request->id);
+        if(!is_numeric($request->productId) || $request->productId < 0) {
+            return redirect('/products')->with('error', 'Deletion error: invalid product id');
+        }
+
+        try {
+            DB::delete("DELETE FROM products WHERE id = ?", [$request->productId]);
+        } catch (QueryException $qe) {
+            return redirect('/products')->with('error', 'Deletion error: '. $qe->getMessage());
+        }
 
         return redirect('/products')->with('status', 'Product was deleted');
     }

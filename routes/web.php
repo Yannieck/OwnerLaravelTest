@@ -17,4 +17,4 @@ Route::view('/', 'index');
 Route::view('/products', 'products.index');
 
 Route::post('/product', 'ProductController@new');
-Route::delete('/product', 'ProductController@delete');
+Route::delete('/product/{productId}', 'ProductController@delete')->name('product');
