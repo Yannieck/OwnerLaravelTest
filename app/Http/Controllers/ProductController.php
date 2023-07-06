@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Product;
+use App\Service\Product\ProductService;
 use App\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -10,6 +11,13 @@ use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
+    protected $productService;
+
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
+
     public function index()
     {
         return view('products.index');
@@ -23,39 +31,20 @@ class ProductController extends Controller
             return redirect('/products')->with('error', 'Invalid product: No description specified');
         }
 
-        try {
-            DB::insert("INSERT INTO products (name, description) VALUES (?, ?)", [$request->name, $request->description]);
-        } catch (QueryException $qe) {
-            $errorMsg = "";
-            switch ($qe->getCode()){
-                case 22001:
-                    $errorMsg = "Name is too long (max 64 characters)";
-                    break;
-                case 23000:
-                    $errorMsg = "Product name must be unique";
-                    break;
-                default:
-                    $errorMsg = "Unknown error, code: " . $qe->getCode();
-                    break;
-            }
-            return redirect('/products')->with('error', 'Invalid product: ' . $errorMsg);
-        }
+        $result = $this->productService->new($request->name, $request->description);
 
-        return redirect('/products')->with('status', 'Product saved');
+        return redirect('/products')->with($result['returnType'], $result['message']);
+
     }
 
     public function delete(Request $request)
     {
-        if(empty($request->productId) || !is_numeric($request->productId) || $request->productId < 0) {
+        if (empty($request->productId) || !is_numeric($request->productId) || $request->productId < 0) {
             return redirect('/products')->with('error', 'Deletion error: invalid product id');
         }
 
-        try {
-            DB::delete("DELETE FROM products WHERE id = ?", [$request->productId]);
-        } catch (QueryException $qe) {
-            return redirect('/products')->with('error', 'Deletion error: '. $qe->getMessage());
-        }
+        $result = $this->productService->delete($request->productId);
 
-        return redirect('/products')->with('status', 'Product was deleted');
+        return redirect('/products')->with($result['returnType'], $result['message']);
     }
 }
