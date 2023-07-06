@@ -19,10 +19,12 @@ class ProductController extends Controller
     {
         if (empty($request->name)) {
             return redirect('/products')->with('error', 'Invalid product: No name specified');
+        } elseif (empty($request->description)) {
+            return redirect('/products')->with('error', 'Invalid product: No description specified');
         }
 
         try {
-            DB::insert("INSERT INTO products (name) VALUES (?)", [$request->name]);
+            DB::insert("INSERT INTO products (name, description) VALUES (?, ?)", [$request->name, $request->description]);
         } catch (QueryException $qe) {
             $errorMsg = "";
             switch ($qe->getCode()){
@@ -44,7 +46,7 @@ class ProductController extends Controller
 
     public function delete(Request $request)
     {
-        if(!is_numeric($request->productId) || $request->productId < 0) {
+        if(empty($request->productId) || !is_numeric($request->productId) || $request->productId < 0) {
             return redirect('/products')->with('error', 'Deletion error: invalid product id');
         }
 
