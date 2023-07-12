@@ -2,6 +2,7 @@
 
 namespace App\Service\Product;
 
+use App\Events\ProductCreated;
 use App\Product;
 use App\Tags;
 use Illuminate\Database\QueryException;
@@ -21,6 +22,7 @@ class ProductService
                 ]);
                 $product->tags()->attach($tag->id);
             }
+            event(new ProductCreated($product));
         } catch (QueryException $qe) {
             $errorMsg = "";
             switch ($qe->getCode()) {
