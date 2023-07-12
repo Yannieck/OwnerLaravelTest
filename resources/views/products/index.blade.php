@@ -23,7 +23,8 @@
         <ul>
             @foreach (\App\Product::all() as $product)
             <li>
-                {!! $product->name !!} - {!! $product->description !!}
+                {!! $product->name !!} - {!! $product->description !!} :
+                @foreach ($product->tags as $tag) {!! $tag->name !!}, @endforeach
                 <form method="POST" action={{ route('product', ['productId' => $product->id]) }}>
                     @method('DELETE')
                     @csrf

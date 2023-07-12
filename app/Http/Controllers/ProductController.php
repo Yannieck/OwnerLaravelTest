@@ -31,7 +31,12 @@ class ProductController extends Controller
             return redirect('/products')->with('error', 'Invalid product: No description specified');
         }
 
-        $result = $this->productService->new($request->name, $request->description);
+        $tags = [];
+        if(!empty($request->tags)) {
+            $tags = explode(',', $request->tags);
+        }
+
+        $result = $this->productService->new($request->name, $request->description, $tags);
 
         return redirect('/products')->with($result['returnType'], $result['message']);
 

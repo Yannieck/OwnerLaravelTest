@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Product extends Model
 {
@@ -12,7 +13,15 @@ class Product extends Model
      *
      * @var array
      */
-    protected $fillable = [
-        'name',
-    ];
+    protected $fillable = ['name', 'description'];
+
+    protected $table = 'products';
+
+    /**
+     * The product that have the tag
+     */
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tags::class);
+    }
 }

@@ -2,19 +2,28 @@
 
 namespace App\Service\Product;
 
+use App\Product;
+use App\Tags;
 use Illuminate\Database\QueryException;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class ProductService
 {
-    public function new(string $name, string $description): array
+    public function new(string $name, string $description, array $tags): array
     {
         try {
-            DB::insert("INSERT INTO products (name, description) VALUES (?, ?)", [$name, $description]);
+            $product = Product::create([
+                'name' => $name,
+                'description' => $description
+            ]);
+            foreach ($tags as $tagName) {
+                $tag = Tags::firstOrCreate([
+                    'name' => $tagName,
+                ]);
+                $product->tags()->attach($tag->id);
+            }
         } catch (QueryException $qe) {
             $errorMsg = "";
-            switch ($qe->getCode()){
+            switch ($qe->getCode()) {
                 case 22001:
                     $errorMsg = "Name is too long (max 64 characters)";
                     break;
@@ -22,7 +31,7 @@ class ProductService
                     $errorMsg = "Product name must be unique";
                     break;
                 default:
-                    $errorMsg = "Unknown error, code: " . $qe->getCode();
+                    $errorMsg = "Unknown error, code: " . $qe->getMessage();
                     break;
             }
 
@@ -32,10 +41,10 @@ class ProductService
         return ["returnType" => 'status', "message" => 'Product saved'];
     }
 
-    public function delete(int $productId)
+    public function delete(int $productId): array
     {
         try {
-            DB::delete("DELETE FROM products WHERE id = ?", [$productId]);
+            Product::destroy($productId);
         } catch (QueryException $qe) {
             return ["returnType" => 'error', "message" => 'Deletion error: ' . $qe->getMessage()];
         }
